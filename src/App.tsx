@@ -13,6 +13,7 @@ import DocumentsPage from "./pages/DocumentsPage";
 import AccessibilityPlanPage from "./pages/AccessibilityPlanPage";
 import UploadInboxPage from "./pages/UploadInboxPage";
 import ResultsExplorerPage from "./pages/ResultsExplorerPage";
+import MedicalResourcesPage from "./pages/MedicalResourcesPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
