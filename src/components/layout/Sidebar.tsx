@@ -4,7 +4,7 @@ import {
   Upload,
   FlaskConical,
   Stethoscope,
-  Activity,
+  
   HeartPulse,
   CalendarDays,
   ClipboardCheck,
