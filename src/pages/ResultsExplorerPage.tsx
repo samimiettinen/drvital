@@ -8,6 +8,15 @@ import { MedicalTerm } from '@/components/shared/MedicalTerm';
 import { ConfidenceBadge, ExtractionConfidence } from '@/components/shared/ConfidenceBadge';
 import { biomarkers, healthCategories, healthStory, type Biomarker, type BodySystem } from '@/data/biomarkerData';
 import { TrendingUp, TrendingDown, Minus, BookOpen, AlertCircle, HelpCircle, ArrowRight, Lightbulb, FileText, Shield } from 'lucide-react';
+import liverIcon from '@/assets/liver-icon.png';
+
+function CategoryIcon({ icon, size = 'md' }: { icon: string; size?: 'sm' | 'md' | 'lg' }) {
+  const sizeClass = size === 'sm' ? 'h-4 w-4' : size === 'lg' ? 'h-6 w-6' : 'h-5 w-5';
+  if (icon === 'liver-img') {
+    return <img src={liverIcon} alt="Liver" className={`${sizeClass} inline-block`} />;
+  }
+  return <span className={size === 'lg' ? 'text-xl' : size === 'sm' ? 'text-sm' : 'text-lg'}>{icon}</span>;
+}
 
 export default function ResultsExplorerPage() {
   const [selectedSystem, setSelectedSystem] = useState<BodySystem | 'all'>('all');
@@ -142,7 +151,7 @@ export default function ResultsExplorerPage() {
                 onClick={() => setSelectedSystem(selectedSystem === cat.id ? 'all' : cat.id)}
                 className={`health-card-hover p-3 text-center transition-all ${selectedSystem === cat.id ? 'ring-2 ring-primary/30' : ''}`}
               >
-                <span className="text-xl mb-1 block">{cat.icon}</span>
+                <CategoryIcon icon={cat.icon} size="lg" />
                 <p className="text-xs font-medium mb-0.5">{cat.name}</p>
                 <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${
                   cat.status === 'good' ? 'bg-success/10 text-success' :
@@ -162,7 +171,7 @@ export default function ResultsExplorerPage() {
           return cat ? (
             <div className="health-card animate-fade-in">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-lg">{cat.icon}</span>
+                <CategoryIcon icon={cat.icon} size="md" />
                 <h3 className="font-semibold text-sm">{cat.name}</h3>
                 <span className={`source-badge ${
                   cat.status === 'good' ? 'bg-success/10 text-success' :

@@ -4,6 +4,14 @@ import { biomarkers, healthCategories } from '@/data/biomarkerData';
 import { MedicalTerm } from '@/components/shared/MedicalTerm';
 import { X } from 'lucide-react';
 import bodyAnatomyImg from '@/assets/body-anatomy.png';
+import liverIcon from '@/assets/liver-icon.png';
+
+function SystemIcon({ icon }: { icon: string }) {
+  if (icon === 'liver-img') {
+    return <img src={liverIcon} alt="Liver" className="h-4 w-4 inline-block" />;
+  }
+  return <span>{icon}</span>;
+}
 
 // Hotspot positions as percentages relative to the image
 const bodyRegions: { id: BodySystem; label: string; top: number; left: number; width: number; height: number }[] = [
@@ -90,7 +98,7 @@ export function BodyMap() {
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="font-semibold text-sm flex items-center gap-2">
-                    <span>{selectedCategory.icon}</span>
+                    <SystemIcon icon={selectedCategory.icon} />
                     {selectedCategory.name}
                   </h3>
                   <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium mt-1 ${
