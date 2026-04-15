@@ -4,7 +4,7 @@ import {
   Upload,
   FlaskConical,
   Stethoscope,
-  Activity,
+  
   HeartPulse,
   CalendarDays,
   ClipboardCheck,
@@ -21,8 +21,7 @@ const navItems = [
   { path: '/upload', label: 'Upload & Inbox', icon: Upload },
   { path: '/results', label: 'Results Explorer', icon: FlaskConical },
   { path: '/diagnoses', label: 'Diagnoses', icon: Stethoscope },
-  { path: '/health-trends', label: 'Health Trends', icon: Activity },
-  { path: '/healthspan', label: 'Healthspan', icon: HeartPulse },
+  { path: '/health-overview', label: 'My Health Story', icon: HeartPulse },
   { path: '/events', label: 'Events', icon: CalendarDays },
   { path: '/appointment-prep', label: 'Appointment Prep', icon: ClipboardCheck },
   { path: '/documents', label: 'Documents', icon: FileText },

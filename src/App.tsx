@@ -1,13 +1,12 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { MetricProvider } from "@/contexts/MetricContext";
 import DashboardPage from "./pages/DashboardPage";
 import DiagnosesPage from "./pages/DiagnosesPage";
-import HealthTrendsPage from "./pages/HealthTrendsPage";
-import HealthspanPage from "./pages/HealthspanPage";
+import HealthOverviewPage from "./pages/HealthOverviewPage";
 import EventsPage from "./pages/EventsPage";
 import AppointmentPrepPage from "./pages/AppointmentPrepPage";
 import DocumentsPage from "./pages/DocumentsPage";
@@ -32,8 +31,9 @@ const App = () => (
             <Route path="/upload" element={<UploadInboxPage />} />
             <Route path="/results" element={<ResultsExplorerPage />} />
             <Route path="/diagnoses" element={<DiagnosesPage />} />
-            <Route path="/health-trends" element={<HealthTrendsPage />} />
-            <Route path="/healthspan" element={<HealthspanPage />} />
+            <Route path="/health-overview" element={<HealthOverviewPage />} />
+            <Route path="/health-trends" element={<Navigate to="/health-overview" replace />} />
+            <Route path="/healthspan" element={<Navigate to="/health-overview" replace />} />
             <Route path="/events" element={<EventsPage />} />
             <Route path="/appointment-prep" element={<AppointmentPrepPage />} />
             <Route path="/documents" element={<DocumentsPage />} />
