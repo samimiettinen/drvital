@@ -348,17 +348,17 @@ export default function HealthOverviewPage() {
                         </div>
                         <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider ml-3 ${
                           b.status === 'normal' ? 'bg-success/10 text-success' :
-                          b.status === 'borderline' ? 'bg-warning/10 text-warning' :
+                          (b.status === 'slightly_high' || b.status === 'slightly_low') ? 'bg-warning/10 text-warning' :
                           'bg-destructive/10 text-destructive'
                         }`}>
-                          {b.status}
+                          {b.status.replace('_', ' ')}
                         </span>
                       </div>
                       {expandedMetric === b.id && (
                         <div className="mt-3 pt-3 border-t border-border">
                           <p className="text-xs text-muted-foreground leading-relaxed">{b.explanation}</p>
                           <p className="text-[10px] text-muted-foreground mt-2">
-                            Range: {b.referenceRange.low}–{b.referenceRange.high} {b.unit} · {b.source} · {b.date}
+                            Range: {b.referenceRange.low}–{b.referenceRange.high} {b.unit} · {b.sourceProvider} · {b.date}
                           </p>
                         </div>
                       )}
