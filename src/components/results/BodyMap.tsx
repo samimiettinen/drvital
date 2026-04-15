@@ -3,22 +3,24 @@ import type { BodySystem } from '@/data/biomarkerData';
 import { biomarkers, healthCategories } from '@/data/biomarkerData';
 import { MedicalTerm } from '@/components/shared/MedicalTerm';
 import { X } from 'lucide-react';
+import bodyAnatomyImg from '@/assets/body-anatomy.png';
 
-const bodyRegions: { id: BodySystem; label: string; x: number; y: number; rx: number; ry: number }[] = [
-  { id: 'heart', label: 'Heart', x: 52, y: 28, rx: 8, ry: 7 },
-  { id: 'liver', label: 'Liver', x: 40, y: 38, rx: 8, ry: 6 },
-  { id: 'kidneys', label: 'Kidneys', x: 50, y: 42, rx: 12, ry: 5 },
-  { id: 'metabolism', label: 'Metabolism', x: 50, y: 52, rx: 10, ry: 6 },
-  { id: 'blood', label: 'Blood', x: 50, y: 18, rx: 8, ry: 5 },
-  { id: 'hormones', label: 'Hormones', x: 50, y: 12, rx: 7, ry: 4 },
-  { id: 'inflammation', label: 'Inflammation', x: 62, y: 35, rx: 7, ry: 5 },
-  { id: 'vitamins', label: 'Vitamins', x: 50, y: 62, rx: 10, ry: 5 },
+// Hotspot positions as percentages relative to the image
+const bodyRegions: { id: BodySystem; label: string; top: number; left: number; width: number; height: number }[] = [
+  { id: 'heart', label: 'Heart', top: 22, left: 42, width: 16, height: 10 },
+  { id: 'liver', label: 'Liver', top: 33, left: 30, width: 20, height: 10 },
+  { id: 'kidneys', label: 'Kidneys', top: 42, left: 30, width: 40, height: 8 },
+  { id: 'metabolism', label: 'Metabolism', top: 48, left: 32, width: 36, height: 14 },
+  { id: 'blood', label: 'Blood', top: 16, left: 30, width: 40, height: 8 },
+  { id: 'hormones', label: 'Hormones', top: 5, left: 35, width: 30, height: 8 },
+  { id: 'inflammation', label: 'Inflammation', top: 28, left: 52, width: 18, height: 10 },
+  { id: 'vitamins', label: 'Vitamins', top: 62, left: 35, width: 30, height: 10 },
 ];
 
-const statusColors: Record<string, string> = {
-  good: 'fill-success/20 stroke-success/50',
-  attention: 'fill-warning/20 stroke-warning/50',
-  concern: 'fill-destructive/15 stroke-destructive/40',
+const statusColors: Record<string, { bg: string; border: string; ring: string }> = {
+  good: { bg: 'bg-success/15', border: 'border-success/30', ring: 'ring-success/40' },
+  attention: { bg: 'bg-warning/15', border: 'border-warning/30', ring: 'ring-warning/40' },
+  concern: { bg: 'bg-destructive/10', border: 'border-destructive/25', ring: 'ring-destructive/40' },
 };
 
 export function BodyMap() {
@@ -31,35 +33,46 @@ export function BodyMap() {
       <h2 className="section-title mb-1">Body Systems Overview</h2>
       <p className="section-subtitle mb-4">Click a region to see related markers and insights</p>
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* Body SVG */}
-        <div className="relative w-full max-w-[220px] mx-auto lg:mx-0 flex-shrink-0">
-          <svg viewBox="0 0 100 80" className="w-full">
-            {/* Simplified body outline */}
-            <ellipse cx="50" cy="8" rx="8" ry="8" className="fill-muted stroke-border" strokeWidth="0.5" />
-            <path d="M42 16 L38 28 L32 50 L35 50 L42 32 L44 55 L40 75 L46 75 L50 55 L54 75 L60 75 L56 55 L58 32 L65 50 L68 50 L62 28 L58 16 Z" className="fill-muted stroke-border" strokeWidth="0.5" />
-
-            {/* Clickable regions */}
-            {bodyRegions.map(region => {
-              const cat = healthCategories.find(c => c.id === region.id);
-              const colorClass = cat ? statusColors[cat.status] : 'fill-muted/30 stroke-border';
-              const isSelected = selected === region.id;
-              return (
-                <g key={region.id} onClick={() => setSelected(selected === region.id ? null : region.id)} className="cursor-pointer">
-                  <ellipse
-                    cx={region.x} cy={region.y} rx={region.rx} ry={region.ry}
-                    className={`${colorClass} transition-all duration-200 ${isSelected ? 'stroke-primary stroke-[1.5]' : ''}`}
-                    strokeWidth={isSelected ? 1.5 : 0.8}
-                    opacity={0.7}
-                  />
-                  <text x={region.x} y={region.y + 1} textAnchor="middle" className="fill-foreground text-[3px] font-medium pointer-events-none select-none">
-                    {region.label}
-                  </text>
-                </g>
-              );
-            })}
-          </svg>
+        {/* Body image with hotspots */}
+        <div className="relative w-full max-w-[260px] mx-auto lg:mx-0 flex-shrink-0">
+          <img
+            src={bodyAnatomyImg}
+            alt="Human body anatomy showing major organ systems"
+            className="w-full h-auto"
+            width={512}
+            height={1024}
+          />
+          {/* Clickable hotspots */}
+          {bodyRegions.map(region => {
+            const cat = healthCategories.find(c => c.id === region.id);
+            const colors = cat ? statusColors[cat.status] : statusColors.good;
+            const isSelected = selected === region.id;
+            return (
+              <button
+                key={region.id}
+                onClick={() => setSelected(selected === region.id ? null : region.id)}
+                className={`absolute rounded-lg border transition-all duration-200 flex items-center justify-center group
+                  ${colors.bg} ${colors.border}
+                  ${isSelected ? `ring-2 ${colors.ring} border-primary/50 shadow-md` : 'hover:shadow-sm'}
+                `}
+                style={{
+                  top: `${region.top}%`,
+                  left: `${region.left}%`,
+                  width: `${region.width}%`,
+                  height: `${region.height}%`,
+                }}
+                title={region.label}
+              >
+                <span className={`text-[9px] font-semibold px-1 py-0.5 rounded bg-card/80 backdrop-blur-sm shadow-sm transition-opacity
+                  ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}
+                `}>
+                  {region.label}
+                </span>
+              </button>
+            );
+          })}
           {/* Legend */}
-          <div className="flex gap-3 justify-center mt-2 text-[10px] text-muted-foreground">
+          <div className="flex gap-3 justify-center mt-3 text-[10px] text-muted-foreground">
             <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-success/40" /> Good</span>
             <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-warning/40" /> Attention</span>
             <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-destructive/30" /> Concern</span>
