@@ -52,7 +52,8 @@ export function MedicalTerm({ term, children, className = '' }: MedicalTermProps
       </TooltipTrigger>
       <TooltipContent
         side="top"
-        className="max-w-xs text-xs leading-relaxed p-3"
+        className="max-w-xs text-xs leading-relaxed p-3 z-[100]"
+        sideOffset={8}
       >
         <p className="font-semibold mb-1">{term}</p>
         <p className="text-muted-foreground">{explanation}</p>
