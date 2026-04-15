@@ -5,21 +5,59 @@ import { StatusChip, SourceBadge, CategoryBadge, TrendIndicator } from '@/compon
 import { ConfidenceBadge } from '@/components/shared/ConfidenceBadge';
 import { Sparkline } from '@/components/shared/Charts';
 import { MedicalTerm } from '@/components/shared/MedicalTerm';
+import { HealthChat } from '@/components/shared/HealthChat';
 import { appointments, diagnoses, medications, healthMetrics, documents, recommendations, events } from '@/data/mockData';
 import { biomarkers, healthStory } from '@/data/biomarkerData';
-import { CalendarDays, FileText, Download, Copy, CheckCircle2, AlertCircle, TrendingUp, TrendingDown, ArrowRight, Clock, Pill, Activity, ChevronDown, ChevronUp, Printer } from 'lucide-react';
+import { CalendarDays, FileText, Download, Copy, CheckCircle2, AlertCircle, TrendingUp, TrendingDown, ArrowRight, Clock, Pill, Activity, ChevronDown, ChevronUp, Printer, Plus, X, Stethoscope, MessageCircle, ClipboardList } from 'lucide-react';
+
+// Generate appointment-related AI responses
+function generateAppointmentResponse(question: string): string {
+  const q = question.toLowerCase();
+
+  if (q.includes('medication') || q.includes('dosage') || q.includes('adjust')) {
+    return `Based on your recent lab trends, here are medication-related points to discuss:\n\n• **Metformin 1000mg** — Your HbA1c improved to 6.8%. Your doctor may consider whether the current dose is optimal or could be reduced if progress continues.\n• **Atorvastatin 20mg** — LDL dropped 17% to 118 mg/dL. If target is <100, a dose increase may be discussed.\n• **Lisinopril 10mg** — Blood pressure well-controlled, kidneys tolerating well. Likely no changes needed.\n\nYour liver enzymes (ALT, AST) are both normal, confirming good medication tolerance.`;
+  }
+
+  if (q.includes('sleep') || q.includes('apnea')) {
+    return `Sleep is a key topic for your upcoming visit. Here's what your data shows:\n\n• Your Oura data shows variable sleep duration (5.8–7.9 hours) with declining HRV\n• Suspected sleep apnea was noted in psychiatry notes but never formally evaluated\n• Poor sleep correlates with your elevated CRP and blood pressure variability\n\n**Suggested question for your doctor:** "Should we pursue a sleep study? Could treating sleep apnea help my blood sugar, blood pressure, and anxiety?"`;
+  }
+
+  if (q.includes('bring') || q.includes('prepare') || q.includes('document')) {
+    return `For your visit with Dr. Chen, I'd recommend bringing:\n\n• **Recent lab results** (lab_results_march.pdf) — shows your latest bloodwork\n• **Blood pressure log** (blood_pressure_log_oct.csv) — demonstrates daily BP trends\n• **Diabetes management plan** — to review progress against goals\n• **List of current symptoms** — especially any new ones\n• **Your medication list** — confirm it's current\n\nThe visit brief on this page summarizes all key data points. You can download it as a PDF using the export option in the sidebar.`;
+  }
+
+  if (q.includes('crp') || q.includes('inflammation')) {
+    return `Your CRP at 2.8 mg/L is the main new finding to discuss. Key points:\n\n• It's about 3x the optimal level (<1.0 mg/L)\n• Could be related to metabolic inflammation, stress, or sleep issues\n• Your Atorvastatin may have mild anti-inflammatory benefits\n\n**Questions to ask:** "Should we retest CRP after improving sleep and stress, or investigate further now?" and "Could this be related to my suspected sleep apnea?"`;
+  }
+
+  return `Here's what I can help with for your upcoming appointment:\n\nYour visit with Dr. Chen is primarily about your quarterly diabetes and hypertension review. The key discussion points are:\n\n• HbA1c improved to 6.8% — best in 2 years\n• Cholesterol numbers improving on Atorvastatin\n• Elevated CRP (2.8 mg/L) — new finding needing discussion\n• Sleep study referral consideration\n• Medication dosage review\n\nWould you like to explore any of these topics in detail, or prepare specific questions for your doctor?`;
+}
 
 export default function AppointmentPrepPage() {
   const upcomingAppts = appointments.filter(a => a.status === 'upcoming');
   const [selectedApptId, setSelectedApptId] = useState(upcomingAppts[0]?.id || '');
   const selected = appointments.find(a => a.id === selectedApptId);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
-    brief: true, changes: true, diagnoses: true, meds: true, trends: true, questions: true, docs: true, recs: true
+    brief: true, changes: true, diagnoses: true, meds: true, trends: true, questions: true, docs: true, recs: true, symptoms: true, diagnostics: true
   });
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
+  const [newSymptoms, setNewSymptoms] = useState<string[]>([]);
+  const [symptomInput, setSymptomInput] = useState('');
+  const [showChat, setShowChat] = useState(false);
 
   const toggleSection = (key: string) => setExpandedSections(prev => ({ ...prev, [key]: !prev[key] }));
   const toggleCheck = (key: string) => setCheckedItems(prev => ({ ...prev, [key]: !prev[key] }));
+
+  const addSymptom = () => {
+    if (symptomInput.trim()) {
+      setNewSymptoms(prev => [...prev, symptomInput.trim()]);
+      setSymptomInput('');
+    }
+  };
+
+  const removeSymptom = (index: number) => {
+    setNewSymptoms(prev => prev.filter((_, i) => i !== index));
+  };
 
   const linkedDiags = selected ? diagnoses.filter(d => selected.linkedDiagnoses.includes(d.id)) : [];
   const activeMeds = medications.filter(m => m.status === 'active');
@@ -34,6 +72,15 @@ export default function AppointmentPrepPage() {
 
   const completedChecks = Object.values(checkedItems).filter(Boolean).length;
   const totalChecks = 7;
+
+  // Diagnostics reminders
+  const diagnosticsReminders = [
+    { id: 'dr1', test: 'Sleep Study (Polysomnography)', reason: 'Suspected sleep apnea — noted but never formally evaluated', urgency: 'recommended' as const, lastDone: 'Never' },
+    { id: 'dr2', test: 'Lipid Panel Recheck', reason: 'Follow-up 3 months after starting Atorvastatin', urgency: 'due' as const, lastDone: 'January 2025' },
+    { id: 'dr3', test: 'HbA1c Recheck', reason: 'Quarterly monitoring for diabetes management', urgency: 'upcoming' as const, lastDone: 'March 2025' },
+    { id: 'dr4', test: 'Comprehensive Metabolic Panel', reason: 'Monitor liver/kidney function on current medications', urgency: 'upcoming' as const, lastDone: 'March 2025' },
+    { id: 'dr5', test: 'Eye Exam (Dilated)', reason: 'Annual screening recommended for diabetes', urgency: 'due' as const, lastDone: 'Over 12 months ago' },
+  ];
 
   const contextContent = (
     <ContextPanel>
@@ -71,6 +118,32 @@ export default function AppointmentPrepPage() {
           ))}
         </div>
       </ContextSection>
+
+      {/* AI Chat in Side Panel */}
+      <ContextSection title="Visit Assistant">
+        {showChat ? (
+          <HealthChat
+            title="Ask about your visit"
+            suggestedPrompts={[
+              "What should I bring to my appointment?",
+              "Should we discuss adjusting my medications?",
+              "What's the most important thing to bring up?",
+              "Help me prepare questions about my CRP results",
+            ]}
+            generateResponse={generateAppointmentResponse}
+            onClose={() => setShowChat(false)}
+          />
+        ) : (
+          <button
+            onClick={() => setShowChat(true)}
+            className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-accent/50 text-accent-foreground text-xs font-medium hover:bg-accent transition-colors"
+          >
+            <MessageCircle className="h-3.5 w-3.5 text-primary" />
+            Chat with AI about this visit
+          </button>
+        )}
+      </ContextSection>
+
       <ContextSection title="Documents to Bring">
         {recentDocs.slice(0, 3).map(doc => (
           <div key={doc.id} className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
@@ -165,6 +238,46 @@ export default function AppointmentPrepPage() {
                 </p>
               </div>
 
+              {/* New Symptoms to Mention */}
+              <div className="rounded-lg border border-warning/20 bg-warning/5 px-4 py-3 mb-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Plus className="h-3.5 w-3.5 text-warning-foreground" />
+                  <p className="text-xs font-semibold text-foreground">New symptoms to mention to your doctor</p>
+                </div>
+                {newSymptoms.length > 0 && (
+                  <div className="space-y-1.5 mb-2">
+                    {newSymptoms.map((s, i) => (
+                      <div key={i} className="flex items-center justify-between rounded-lg bg-card px-3 py-1.5 text-xs">
+                        <span>{s}</span>
+                        <button onClick={() => removeSymptom(i)} className="p-0.5 rounded hover:bg-muted">
+                          <X className="h-3 w-3 text-muted-foreground" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div className="flex gap-1.5">
+                  <input
+                    type="text"
+                    value={symptomInput}
+                    onChange={e => setSymptomInput(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && addSymptom()}
+                    placeholder="e.g. occasional dizziness when standing up"
+                    className="flex-1 text-xs bg-card rounded-lg px-2.5 py-2 outline-none focus:ring-1 focus:ring-warning/30 placeholder:text-muted-foreground/50 border border-border"
+                  />
+                  <button
+                    onClick={addSymptom}
+                    disabled={!symptomInput.trim()}
+                    className="px-3 py-2 rounded-lg bg-warning/10 text-warning-foreground text-xs font-medium disabled:opacity-40 hover:bg-warning/20 transition-colors"
+                  >
+                    Add
+                  </button>
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-1.5">
+                  These will be included in your visit brief export
+                </p>
+              </div>
+
               {/* Quick stats */}
               <div className="grid gap-3 grid-cols-2 sm:grid-cols-4">
                 <div className="rounded-lg bg-muted px-3 py-2.5 text-center">
@@ -184,6 +297,41 @@ export default function AppointmentPrepPage() {
                   <p className="text-[11px] text-muted-foreground">Suggested questions</p>
                 </div>
               </div>
+            </div>
+
+            {/* Diagnostics Reminders */}
+            <div className="health-card border-warning/15">
+              <SectionHeader
+                id="diagnostics"
+                icon={Stethoscope}
+                title="Diagnostics Reminders"
+                subtitle="Tests and screenings to discuss at this visit"
+                badge={<span className="source-badge bg-warning/10 text-warning-foreground">{diagnosticsReminders.filter(d => d.urgency === 'due' || d.urgency === 'recommended').length} action needed</span>}
+              />
+              {expandedSections.diagnostics && (
+                <div className="space-y-2">
+                  {diagnosticsReminders.map(dr => (
+                    <div key={dr.id} className={`rounded-lg px-3 py-2.5 ${
+                      dr.urgency === 'due' ? 'bg-warning/5 border border-warning/15' :
+                      dr.urgency === 'recommended' ? 'bg-primary/5 border border-primary/10' :
+                      'bg-muted'
+                    }`}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium">{dr.test}</span>
+                        <span className={`source-badge text-[10px] ${
+                          dr.urgency === 'due' ? 'bg-warning/15 text-warning-foreground' :
+                          dr.urgency === 'recommended' ? 'bg-primary/10 text-primary' :
+                          'bg-muted text-muted-foreground'
+                        }`}>
+                          {dr.urgency === 'due' ? 'Due' : dr.urgency === 'recommended' ? 'Recommended' : 'Upcoming'}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed">{dr.reason}</p>
+                      <p className="text-[10px] text-muted-foreground mt-1">Last done: {dr.lastDone}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Changes Since Last Visit */}
