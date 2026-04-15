@@ -46,6 +46,7 @@ export function TrendChart({ data, baseline, color = 'hsl(172, 50%, 36%)', heigh
           width={35}
         />
         <Tooltip
+          wrapperStyle={{ zIndex: 50 }}
           contentStyle={{
             background: 'hsl(0, 0%, 100%)',
             border: '1px solid hsl(40, 12%, 90%)',
