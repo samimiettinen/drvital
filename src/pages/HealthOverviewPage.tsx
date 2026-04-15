@@ -339,7 +339,7 @@ export default function HealthOverviewPage() {
                               <div
                                 className={`h-full rounded-full transition-all ${
                                   b.status === 'normal' ? 'bg-success' :
-                                  b.status === 'borderline' ? 'bg-warning' : 'bg-destructive'
+                                  (b.status === 'slightly_high' || b.status === 'slightly_low') ? 'bg-warning' : 'bg-destructive'
                                 }`}
                                 style={{ width: `${Math.min(((b.value - b.referenceRange.low) / (b.referenceRange.high - b.referenceRange.low)) * 100, 100)}%` }}
                               />
