@@ -3,6 +3,7 @@ import { AppShell } from '@/components/layout/AppShell';
 import { ContextPanel, ContextSection } from '@/components/layout/ContextPanel';
 import { RangeBar } from '@/components/results/RangeBar';
 import { BodyMap } from '@/components/results/BodyMap';
+import { ResultChat } from '@/components/results/ResultChat';
 import { MedicalTerm } from '@/components/shared/MedicalTerm';
 import { ConfidenceBadge, ExtractionConfidence } from '@/components/shared/ConfidenceBadge';
 import { biomarkers, healthCategories, healthStory, type Biomarker, type BodySystem } from '@/data/biomarkerData';
@@ -77,6 +78,9 @@ export default function ResultsExplorerPage() {
           </div>
         </div>
       </ContextSection>
+      <ContextSection title="">
+        <ResultChat marker={selectedMarker} />
+      </ContextSection>
     </ContextPanel>
   ) : (
     <ContextPanel>
@@ -118,6 +122,14 @@ export default function ResultsExplorerPage() {
       <div className="space-y-6 max-w-5xl animate-fade-in">
         {/* Body Map */}
         <BodyMap />
+
+        {/* Health overview */}
+        <section className="health-card">
+          <h2 className="section-title mb-1">Body Systems Overview</h2>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Most of your body systems are functioning well. Blood sugar and cholesterol management are on a positive trajectory with medication and lifestyle changes. The main area needing attention is low-grade inflammation — worth discussing at your next visit.
+          </p>
+        </section>
 
         {/* Health categories */}
         <section>
