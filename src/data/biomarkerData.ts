@@ -255,7 +255,7 @@ export const healthCategories: HealthCategory[] = [
     sourceDocuments: ['doc6', 'doc4']
   },
   {
-    id: 'liver', name: 'Liver', icon: '🫁',
+    id: 'liver', name: 'Liver', icon: '🫀',
     status: 'good',
     summary: 'Liver enzymes normal. Medications being well tolerated.',
     narrativeSummary: 'Both liver enzymes — ALT and AST — are comfortably within normal range. This is particularly reassuring because you\'re taking two medications that are processed by the liver (Metformin and Atorvastatin). The fact that these enzymes haven\'t risen since starting the statin in January suggests your liver is handling the additional workload well. No action needed, but your doctor will likely continue checking these periodically as a safety measure.',
