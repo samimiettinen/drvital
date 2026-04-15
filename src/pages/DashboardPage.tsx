@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { ContextPanel, ContextSection } from '@/components/layout/ContextPanel';
 import { StatusChip, SourceBadge, CategoryBadge, PriorityDot, TrendIndicator } from '@/components/shared/Badges';
+import { MedicalTerm } from '@/components/shared/MedicalTerm';
 import { Sparkline } from '@/components/shared/Charts';
 import { YearAtAGlance } from '@/components/dashboard/YearAtAGlance';
 import { CoachSummary } from '@/components/dashboard/CoachSummary';
@@ -115,7 +116,7 @@ export default function DashboardPage() {
                     </div>
                     <TrendIndicator trend={m.trend} />
                   </div>
-                  <p className="text-xs text-muted-foreground mb-0.5">{m.name}</p>
+                  <p className="text-xs text-muted-foreground mb-0.5"><MedicalTerm term={m.name} /></p>
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl font-bold font-display">{m.current}</span>
                     <span className="text-xs text-muted-foreground">{m.unit}</span>
@@ -150,7 +151,7 @@ export default function DashboardPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold text-sm">{d.name}</h3>
+                      <h3 className="font-semibold text-sm"><MedicalTerm term={d.name}>{d.name}</MedicalTerm></h3>
                       <StatusChip status={d.status} />
                     </div>
                     <p className="text-xs text-muted-foreground line-clamp-1 mb-1.5">{d.explanation}</p>
