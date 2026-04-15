@@ -4,8 +4,9 @@ import { ContextPanel, ContextSection } from '@/components/layout/ContextPanel';
 import { RangeBar } from '@/components/results/RangeBar';
 import { BodyMap } from '@/components/results/BodyMap';
 import { MedicalTerm } from '@/components/shared/MedicalTerm';
+import { ConfidenceBadge, ExtractionConfidence } from '@/components/shared/ConfidenceBadge';
 import { biomarkers, healthCategories, healthStory, type Biomarker, type BodySystem } from '@/data/biomarkerData';
-import { TrendingUp, TrendingDown, Minus, BookOpen, AlertCircle, HelpCircle, ArrowRight, Filter } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, BookOpen, AlertCircle, HelpCircle, ArrowRight, Lightbulb, FileText, Shield } from 'lucide-react';
 
 export default function ResultsExplorerPage() {
   const [selectedSystem, setSelectedSystem] = useState<BodySystem | 'all'>('all');
@@ -27,9 +28,15 @@ export default function ResultsExplorerPage() {
             <p className="text-sm leading-relaxed">{selectedMarker.explanation}</p>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground mb-1">Why it matters</p>
+            <p className="text-xs text-muted-foreground mb-1">Why it matters for you</p>
             <p className="text-sm leading-relaxed">{selectedMarker.whyItMatters}</p>
           </div>
+          {selectedMarker.clinicalContext && (
+            <div>
+              <p className="text-xs text-muted-foreground mb-1">Your specific context</p>
+              <p className="text-sm leading-relaxed">{selectedMarker.clinicalContext}</p>
+            </div>
+          )}
           <div>
             <p className="text-xs text-muted-foreground mb-1">Everyday factors</p>
             <ul className="space-y-1">
@@ -59,8 +66,14 @@ export default function ResultsExplorerPage() {
               </p>
             </div>
           )}
-          <div className="rounded-lg bg-muted px-3 py-2">
-            <p className="text-[11px] text-muted-foreground">Source: {selectedMarker.sourceDocument} · {selectedMarker.date}</p>
+          <div className="space-y-1.5">
+            <div className="rounded-lg bg-muted px-3 py-2">
+              <p className="text-[11px] text-muted-foreground flex items-center gap-1">
+                <FileText className="h-3 w-3" /> Source: {selectedMarker.sourceProvider}
+              </p>
+              <p className="text-[10px] text-muted-foreground">{selectedMarker.sourceDocument} · {selectedMarker.date}</p>
+            </div>
+            <ExtractionConfidence confidence={selectedMarker.extractionConfidence} />
           </div>
         </div>
       </ContextSection>
@@ -72,19 +85,27 @@ export default function ResultsExplorerPage() {
           <div>
             <p className="text-xs font-medium text-success flex items-center gap-1 mb-1"><TrendingUp className="h-3 w-3" /> Improved</p>
             {healthStory.improvements.slice(0, 3).map((item, i) => (
-              <p key={i} className="text-xs text-muted-foreground mb-1">{item}</p>
+              <div key={i} className="mb-1.5">
+                <p className="text-xs text-muted-foreground">{item.text}</p>
+                <p className="text-[10px] text-muted-foreground/60">{item.evidenceSource}</p>
+              </div>
             ))}
           </div>
           <div>
             <p className="text-xs font-medium text-warning-foreground flex items-center gap-1 mb-1"><AlertCircle className="h-3 w-3" /> Monitor</p>
             {healthStory.concerns.slice(0, 3).map((item, i) => (
-              <p key={i} className="text-xs text-muted-foreground mb-1">{item}</p>
+              <div key={i} className="mb-1.5">
+                <p className="text-xs text-muted-foreground">{item.text}</p>
+                <span className={`inline-flex text-[10px] ${
+                  item.urgency === 'discuss' ? 'text-warning-foreground' : 'text-muted-foreground/60'
+                }`}>{item.urgency === 'discuss' ? 'Discuss with doctor' : 'Continue monitoring'}</span>
+              </div>
             ))}
           </div>
           <div>
             <p className="text-xs font-medium text-muted-foreground flex items-center gap-1 mb-1"><HelpCircle className="h-3 w-3" /> Ask next</p>
             {healthStory.questionsForNextVisit.slice(0, 2).map((q, i) => (
-              <p key={i} className="text-xs text-muted-foreground mb-1">{q}</p>
+              <p key={i} className="text-xs text-muted-foreground mb-1">{q.question}</p>
             ))}
           </div>
         </div>
@@ -123,25 +144,36 @@ export default function ResultsExplorerPage() {
           </div>
         </section>
 
-        {/* Category summary (when filtered) */}
-        {selectedSystem !== 'all' && (
-          <div className="health-card animate-fade-in">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-lg">{healthCategories.find(c => c.id === selectedSystem)?.icon}</span>
-              <h3 className="font-semibold text-sm">{healthCategories.find(c => c.id === selectedSystem)?.name}</h3>
+        {/* Category narrative (when filtered) */}
+        {selectedSystem !== 'all' && (() => {
+          const cat = healthCategories.find(c => c.id === selectedSystem);
+          return cat ? (
+            <div className="health-card animate-fade-in">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-lg">{cat.icon}</span>
+                <h3 className="font-semibold text-sm">{cat.name}</h3>
+                <span className={`source-badge ${
+                  cat.status === 'good' ? 'bg-success/10 text-success' :
+                  cat.status === 'attention' ? 'bg-warning/10 text-warning-foreground' :
+                  'bg-destructive/10 text-destructive'
+                }`}>{cat.status}</span>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-3">{cat.narrativeSummary}</p>
+              <div className="rounded-lg bg-muted/50 px-3 py-2">
+                <p className="text-[11px] text-muted-foreground flex items-center gap-1">
+                  <Shield className="h-3 w-3" /> Source documents: {cat.sourceDocuments.join(', ')}
+                </p>
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {healthCategories.find(c => c.id === selectedSystem)?.summary}
-            </p>
-          </div>
-        )}
+          ) : null;
+        })()}
 
         {/* Biomarker results */}
         <section>
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="section-title">Lab Results & Biomarkers</h2>
-              <p className="section-subtitle">{filtered.length} results · Click for details</p>
+              <p className="section-subtitle">{filtered.length} results · Click for detailed explanation</p>
             </div>
             {selectedSystem !== 'all' && (
               <button onClick={() => setSelectedSystem('all')} className="text-xs text-primary font-medium hover:underline">
@@ -163,15 +195,17 @@ export default function ResultsExplorerPage() {
                     </p>
                     <p className="text-[11px] text-muted-foreground">{marker.medicalName}</p>
                   </div>
-                  {marker.previousValue && (
-                    <div className="text-right">
-                      {marker.value < marker.previousValue ? (
-                        <span className="text-[11px] text-success flex items-center gap-0.5"><TrendingDown className="h-3 w-3" /> from {marker.previousValue}</span>
-                      ) : marker.value > marker.previousValue ? (
-                        <span className="text-[11px] text-warning-foreground flex items-center gap-0.5"><TrendingUp className="h-3 w-3" /> from {marker.previousValue}</span>
-                      ) : null}
-                    </div>
-                  )}
+                  <div className="flex flex-col items-end gap-1">
+                    {marker.previousValue && (
+                      <div>
+                        {marker.value < marker.previousValue ? (
+                          <span className="text-[11px] text-success flex items-center gap-0.5"><TrendingDown className="h-3 w-3" /> from {marker.previousValue}</span>
+                        ) : marker.value > marker.previousValue ? (
+                          <span className="text-[11px] text-warning-foreground flex items-center gap-0.5"><TrendingUp className="h-3 w-3" /> from {marker.previousValue}</span>
+                        ) : null}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <RangeBar
                   value={marker.value}
@@ -181,23 +215,87 @@ export default function ResultsExplorerPage() {
                   unit={marker.unit}
                 />
                 <p className="text-xs text-muted-foreground mt-2 line-clamp-2 leading-relaxed">{marker.explanation}</p>
-                <p className="text-[11px] text-muted-foreground mt-1">Source: {marker.sourceDocument} · {marker.date}</p>
+                <div className="flex items-center justify-between mt-1.5">
+                  <p className="text-[11px] text-muted-foreground flex items-center gap-1">
+                    <FileText className="h-3 w-3" /> {marker.sourceProvider} · {marker.date}
+                  </p>
+                  <ExtractionConfidence confidence={marker.extractionConfidence} />
+                </div>
               </button>
             ))}
           </div>
         </section>
 
-        {/* Cross-document story */}
+        {/* Cross-document narrative story */}
         <section className="health-card">
           <div className="flex items-start gap-3 mb-4">
             <BookOpen className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
             <div>
               <h2 className="section-title">What is my story?</h2>
-              <p className="section-subtitle">A synthesis across all your records</p>
+              <p className="section-subtitle">A synthesis across all your records and data sources</p>
             </div>
           </div>
 
-          <div className="space-y-4">
+          {/* Overall narrative */}
+          <div className="rounded-lg bg-accent/30 border border-primary/10 px-4 py-3.5 mb-5">
+            <p className="text-sm leading-relaxed text-foreground">{healthStory.overallNarrative}</p>
+          </div>
+
+          <div className="space-y-5">
+            {/* Narrative threads */}
+            <div>
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2 flex items-center gap-1">
+                <Lightbulb className="h-3 w-3" /> Key narrative threads
+              </p>
+              <div className="space-y-2.5">
+                {healthStory.narrativeThreads.map(thread => {
+                  const statusColors = {
+                    improving: 'bg-success/10 text-success',
+                    stable: 'bg-muted text-muted-foreground',
+                    worsening: 'bg-destructive/10 text-destructive',
+                    resolved: 'bg-muted text-muted-foreground',
+                    emerging: 'bg-warning/10 text-warning-foreground',
+                  };
+                  return (
+                    <div key={thread.id} className="rounded-lg bg-muted/50 px-4 py-3">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="text-sm font-medium">{thread.title}</span>
+                        <span className={`source-badge ${statusColors[thread.status]}`}>
+                          {thread.status.charAt(0).toUpperCase() + thread.status.slice(1)}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed mb-2">{thread.narrative}</p>
+                      <div className="space-y-1">
+                        {thread.evidence.map((e, i) => (
+                          <div key={i} className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                            <ConfidenceBadge strength={e.confidence} showLabel={false} />
+                            <span>{e.source}: {e.detail}</span>
+                            <span className="text-muted-foreground/50">({e.date})</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Cross-document insights */}
+            <div>
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Cross-document insights</p>
+              <div className="space-y-2">
+                {healthStory.crossDocumentInsights.map((insight, i) => (
+                  <div key={i} className="rounded-lg bg-muted/50 px-3 py-2.5">
+                    <p className="text-xs text-foreground leading-relaxed mb-1.5">{insight.insight}</p>
+                    <div className="flex items-center gap-2">
+                      <ConfidenceBadge strength={insight.confidence} />
+                      <span className="text-[10px] text-muted-foreground">{insight.documents.length} source documents</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {/* Timeline highlights */}
             <div>
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Timeline highlights</p>
@@ -205,9 +303,10 @@ export default function ResultsExplorerPage() {
                 {healthStory.timelineHighlights.map((h, i) => (
                   <div key={i} className="flex items-start gap-3">
                     <span className="text-xs text-muted-foreground font-mono w-16 flex-shrink-0 pt-0.5">{h.date}</span>
-                    <div>
+                    <div className="flex-1">
                       <p className="text-sm font-medium">{h.event}</p>
                       <p className="text-xs text-muted-foreground">{h.significance}</p>
+                      <p className="text-[10px] text-muted-foreground/60 mt-0.5">Source: {h.source}</p>
                     </div>
                   </div>
                 ))}
@@ -219,10 +318,13 @@ export default function ResultsExplorerPage() {
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Still unresolved</p>
               <div className="space-y-1.5">
                 {healthStory.unresolvedItems.map((item, i) => (
-                  <p key={i} className="text-xs text-muted-foreground flex items-start gap-2">
-                    <AlertCircle className="h-3 w-3 text-warning flex-shrink-0 mt-0.5" />
-                    {item}
-                  </p>
+                  <div key={i} className="flex items-start gap-2 rounded-lg bg-warning/5 px-3 py-2">
+                    <AlertCircle className="h-3.5 w-3.5 text-warning flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs text-foreground">{item.text}</p>
+                      <p className="text-[10px] text-muted-foreground">Last mentioned: {item.lastMentioned} · Owner: {item.owner}</p>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
@@ -232,8 +334,9 @@ export default function ResultsExplorerPage() {
         {/* Disclaimer */}
         <div className="rounded-lg bg-muted/50 border border-border p-4">
           <p className="text-xs text-muted-foreground leading-relaxed">
-            This summary is for education and preparation, not diagnosis. All values are compared to standard reference ranges.
-            Your doctor may use different targets based on your health history. Always discuss results with a healthcare professional.
+            This summary is for education and preparation, not diagnosis. All values are compared to standard reference ranges
+            and labeled with source provenance and extraction confidence. Your doctor may use different targets based on your health history.
+            Always discuss results with a healthcare professional.
           </p>
         </div>
       </div>
