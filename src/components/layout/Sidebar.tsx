@@ -1,10 +1,8 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
-  Upload,
   FlaskConical,
   Stethoscope,
-  
   HeartPulse,
   CalendarDays,
   ClipboardCheck,
