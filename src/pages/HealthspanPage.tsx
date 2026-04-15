@@ -2,6 +2,7 @@ import { AppShell } from '@/components/layout/AppShell';
 import { ContextPanel, ContextSection } from '@/components/layout/ContextPanel';
 import { healthspanData, healthMetrics } from '@/data/mockData';
 import { TrendChart } from '@/components/shared/Charts';
+import { MedicalTerm } from '@/components/shared/MedicalTerm';
 
 const scoreColor = (score: number) => {
   if (score >= 75) return 'text-success';
@@ -71,7 +72,7 @@ export default function HealthspanPage() {
 
         {/* Resilience trend chart */}
         <div className="health-card">
-          <h2 className="section-title mb-1">Recovery & HRV Trend</h2>
+          <h2 className="section-title mb-1">Recovery & <MedicalTerm term="HRV" /> Trend</h2>
           <p className="section-subtitle mb-4">30-day trend compared to your baseline</p>
           <TrendChart
             data={healthMetrics.find(m => m.name === 'HRV')?.data30d || []}
@@ -113,7 +114,7 @@ export default function HealthspanPage() {
           <div className="space-y-3">
             <div className="rounded-lg bg-muted px-4 py-3">
               <p className="text-sm font-medium mb-1">Prioritize sleep consistency</p>
-              <p className="text-xs text-muted-foreground">Variable sleep is the top factor reducing your recovery score. Consistent timing may improve HRV within 1–2 weeks.</p>
+              <p className="text-xs text-muted-foreground">Variable sleep is the top factor reducing your recovery score. Consistent timing may improve <MedicalTerm term="HRV" /> within 1–2 weeks.</p>
             </div>
             <div className="rounded-lg bg-muted px-4 py-3">
               <p className="text-sm font-medium mb-1">Increase daily movement</p>

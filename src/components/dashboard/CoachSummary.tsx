@@ -1,5 +1,6 @@
 import { healthspanData, diagnoses, healthMetrics, appointments, events } from '@/data/mockData';
 import { Sparkle, TrendingUp, Shield, Calendar } from 'lucide-react';
+import { MedicalTerm } from '@/components/shared/MedicalTerm';
 
 export function CoachSummary() {
   const activeDiags = diagnoses.filter(d => d.status === 'active');
@@ -24,7 +25,7 @@ export function CoachSummary() {
           You're managing <strong>{activeDiags.length} active conditions</strong> with consistent medication adherence.
           Your weight has been <strong>trending down</strong> over the past month — a positive signal from your dietary changes.
           {decliningMetrics.length > 0 && (
-            <> Recovery markers like <strong>HRV</strong> and <strong>activity</strong> are below your baseline this week,
+            <> Recovery markers like <strong><MedicalTerm term="HRV" /></strong> and <strong>activity</strong> are below your baseline this week,
             likely influenced by recent stress. </>
           )}
           {improvingMetrics.length > 0 && (

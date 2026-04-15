@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { ContextPanel, ContextSection } from '@/components/layout/ContextPanel';
 import { StatusChip, SourceBadge } from '@/components/shared/Badges';
+import { MedicalTerm } from '@/components/shared/MedicalTerm';
 import { diagnoses, medications, type Diagnosis } from '@/data/mockData';
 
 export default function DiagnosesPage() {
@@ -103,14 +104,14 @@ export default function DiagnosesPage() {
                 </div>
                 <SourceBadge source={d.sourceType} />
               </div>
-              <h3 className="font-semibold text-foreground mb-1">{d.name}</h3>
+              <h3 className="font-semibold text-foreground mb-1"><MedicalTerm term={d.name}>{d.name}</MedicalTerm></h3>
               <p className="text-sm text-muted-foreground line-clamp-2 mb-2">{d.explanation}</p>
               <div className="flex flex-wrap gap-1.5">
                 {d.relatedMedications.map(m => (
-                  <span key={m} className="source-badge bg-muted text-muted-foreground text-[11px]">{m}</span>
+                  <span key={m} className="source-badge bg-muted text-muted-foreground text-[11px]"><MedicalTerm term={m}>{m}</MedicalTerm></span>
                 ))}
                 {d.relatedMeasurements.slice(0, 3).map(m => (
-                  <span key={m} className="source-badge bg-accent text-accent-foreground text-[11px]">{m}</span>
+                  <span key={m} className="source-badge bg-accent text-accent-foreground text-[11px]"><MedicalTerm term={m}>{m}</MedicalTerm></span>
                 ))}
               </div>
             </button>

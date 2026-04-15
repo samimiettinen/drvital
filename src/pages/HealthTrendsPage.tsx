@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
 import { ContextPanel, ContextSection } from '@/components/layout/ContextPanel';
 import { TrendIndicator } from '@/components/shared/Badges';
+import { MedicalTerm } from '@/components/shared/MedicalTerm';
 import { TrendChart, Sparkline } from '@/components/shared/Charts';
 import { healthMetrics } from '@/data/mockData';
 import { Wifi, WifiOff } from 'lucide-react';
@@ -84,7 +85,7 @@ export default function HealthTrendsPage() {
               className={`metric-card text-left transition-all ${selectedMetric.id === m.id ? 'ring-2 ring-primary/30' : ''}`}
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">{m.name}</span>
+                <span className="text-xs text-muted-foreground"><MedicalTerm term={m.name} /></span>
                 <TrendIndicator trend={m.trend} />
               </div>
               <div className="text-xl font-semibold font-display">
@@ -99,7 +100,7 @@ export default function HealthTrendsPage() {
         <div className="health-card">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="section-title">{selectedMetric.name}</h2>
+              <h2 className="section-title"><MedicalTerm term={selectedMetric.name} /></h2>
               <p className="section-subtitle capitalize">{selectedMetric.source.replace('_', ' ')} · {range === '7d' ? '7-day' : '30-day'} trend</p>
             </div>
             <TrendIndicator trend={selectedMetric.trend} />
@@ -122,7 +123,7 @@ export default function HealthTrendsPage() {
             <div className="space-y-2">
               {healthMetrics.filter(m => m.trend === 'improving').map(m => (
                 <div key={m.id} className="flex items-center justify-between text-sm">
-                  <span>{m.name}</span>
+                  <span><MedicalTerm term={m.name} /></span>
                   <span className="text-success text-xs font-medium">↑ {m.current} {m.unit}</span>
                 </div>
               ))}
@@ -136,7 +137,7 @@ export default function HealthTrendsPage() {
             <div className="space-y-2">
               {healthMetrics.filter(m => m.trend === 'declining').map(m => (
                 <div key={m.id} className="flex items-center justify-between text-sm">
-                  <span>{m.name}</span>
+                  <span><MedicalTerm term={m.name} /></span>
                   <span className="text-destructive text-xs font-medium">↓ {m.current} {m.unit}</span>
                 </div>
               ))}
