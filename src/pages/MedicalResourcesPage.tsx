@@ -50,7 +50,7 @@ const resources = [
 
 export default function MedicalResourcesPage() {
   return (
-    <AppShell contextPanel={<div />}> {/* Empty context panel */}
+    <AppShell pageTitle="Reliable Medical Resources">
       <div className="space-y-6">
         {/* Header */}
         <div className="space-y-2">
