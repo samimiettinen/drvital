@@ -12,7 +12,8 @@ import {
   Accessibility,
   X,
   Shield,
-  BookOpen
+  BookOpen,
+  Settings
 } from 'lucide-react';
 
 const navItems = [
@@ -26,7 +27,8 @@ const navItems = [
   { path: '/appointment-prep', label: 'Appointment Prep', icon: ClipboardCheck },
   { path: '/documents', label: 'Documents', icon: FileText },
   { path: '/accessibility-plan', label: 'Accessibility Plan', icon: Accessibility },
-  { path: '/medical-resources', label: 'Reliable medical resources', icon: BookOpen },
+  { path: '/medical-resources', label: 'Medical Resources', icon: BookOpen },
+  { path: '/settings', label: 'Settings', icon: Settings },
 ];
 
 interface SidebarProps {
