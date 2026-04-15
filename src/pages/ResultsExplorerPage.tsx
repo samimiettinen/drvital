@@ -34,21 +34,21 @@ export default function ResultsExplorerPage() {
             <p className="text-xs text-muted-foreground">{selectedMarker.plainName}</p>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground mb-1">What it is</p>
+            <p className="text-sm font-semibold text-foreground mb-1">What it is</p>
             <p className="text-sm leading-relaxed">{selectedMarker.explanation}</p>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground mb-1">Why it matters for you</p>
+            <p className="text-sm font-semibold text-foreground mb-1">Why it matters for you</p>
             <p className="text-sm leading-relaxed">{selectedMarker.whyItMatters}</p>
           </div>
           {selectedMarker.clinicalContext && (
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Your specific context</p>
+              <p className="text-sm font-semibold text-foreground mb-1">Your specific context</p>
               <p className="text-sm leading-relaxed">{selectedMarker.clinicalContext}</p>
             </div>
           )}
           <div>
-            <p className="text-xs text-muted-foreground mb-1">Everyday factors</p>
+            <p className="text-sm font-semibold text-foreground mb-1">Everyday factors</p>
             <ul className="space-y-1">
               {selectedMarker.lifestyleFactors.map((f, i) => (
                 <li key={i} className="text-xs text-muted-foreground flex items-start gap-1.5">
