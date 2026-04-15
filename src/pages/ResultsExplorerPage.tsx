@@ -34,7 +34,7 @@ export default function ResultsExplorerPage() {
             <p className="text-xs text-muted-foreground">{selectedMarker.plainName}</p>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground mb-1">What it is</p>
+            <p className="text-sm font-semibold text-foreground mb-1">What it is</p>
             <p className="text-sm leading-relaxed">{selectedMarker.explanation}</p>
           </div>
           <div>
