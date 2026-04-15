@@ -2,6 +2,7 @@ import { AppShell } from '@/components/layout/AppShell';
 import { ContextPanel, ContextSection } from '@/components/layout/ContextPanel';
 import { healthspanData, healthMetrics } from '@/data/mockData';
 import { TrendChart } from '@/components/shared/Charts';
+import { MedicalTerm } from '@/components/shared/MedicalTerm';
 
 const scoreColor = (score: number) => {
   if (score >= 75) return 'text-success';
