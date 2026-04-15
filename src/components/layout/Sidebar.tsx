@@ -1,6 +1,8 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
+  Upload,
+  FlaskConical,
   Stethoscope,
   Activity,
   HeartPulse,
@@ -14,6 +16,8 @@ import {
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { path: '/upload', label: 'Upload & Inbox', icon: Upload },
+  { path: '/results', label: 'Results Explorer', icon: FlaskConical },
   { path: '/diagnoses', label: 'Diagnoses', icon: Stethoscope },
   { path: '/health-trends', label: 'Health Trends', icon: Activity },
   { path: '/healthspan', label: 'Healthspan', icon: HeartPulse },

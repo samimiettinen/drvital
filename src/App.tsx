@@ -11,6 +11,8 @@ import EventsPage from "./pages/EventsPage";
 import AppointmentPrepPage from "./pages/AppointmentPrepPage";
 import DocumentsPage from "./pages/DocumentsPage";
 import AccessibilityPlanPage from "./pages/AccessibilityPlanPage";
+import UploadInboxPage from "./pages/UploadInboxPage";
+import ResultsExplorerPage from "./pages/ResultsExplorerPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +25,8 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<DashboardPage />} />
+          <Route path="/upload" element={<UploadInboxPage />} />
+          <Route path="/results" element={<ResultsExplorerPage />} />
           <Route path="/diagnoses" element={<DiagnosesPage />} />
           <Route path="/health-trends" element={<HealthTrendsPage />} />
           <Route path="/healthspan" element={<HealthspanPage />} />

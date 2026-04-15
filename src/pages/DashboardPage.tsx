@@ -5,6 +5,7 @@ import { StatusChip, SourceBadge, CategoryBadge, PriorityDot, TrendIndicator } f
 import { MedicalTerm } from '@/components/shared/MedicalTerm';
 import { Sparkline } from '@/components/shared/Charts';
 import { YearAtAGlance } from '@/components/dashboard/YearAtAGlance';
+import { HealthStoryCard } from '@/components/dashboard/HealthStoryCard';
 import { CoachSummary } from '@/components/dashboard/CoachSummary';
 import { DocumentDropZone } from '@/components/dashboard/DocumentDropZone';
 import { AppointmentHero } from '@/components/dashboard/AppointmentHero';
@@ -189,6 +190,9 @@ export default function DashboardPage() {
             </div>
           </section>
         </div>
+
+        {/* What is my story? */}
+        <HealthStoryCard />
 
         {/* Document Upload Zone */}
         <DocumentDropZone />
