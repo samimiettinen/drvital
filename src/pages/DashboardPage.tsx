@@ -115,15 +115,17 @@ export default function DashboardPage() {
                     <div className="h-8 w-8 rounded-lg bg-accent flex items-center justify-center">
                       <Icon className="h-4 w-4 text-accent-foreground" />
                     </div>
-                    <TrendIndicator trend={m.trend} />
+                    <div className="text-right">
+                      <TrendIndicator trend={m.trend} />
+                      <span className={`block text-xs font-medium ${diff >= 0 ? 'text-success' : 'text-destructive'}`}>
+                        {diffLabel}
+                      </span>
+                    </div>
                   </div>
                   <p className="text-xs text-muted-foreground mb-0.5"><MedicalTerm term={m.name} /></p>
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl font-bold font-display">{m.current}</span>
                     <span className="text-xs text-muted-foreground">{m.unit}</span>
-                    <span className={`text-xs font-medium ${diff >= 0 ? 'text-success' : 'text-destructive'}`}>
-                      {diffLabel}
-                    </span>
                   </div>
                   <div className="mt-2">
                     <Sparkline data={m.data7d} height={36} />
