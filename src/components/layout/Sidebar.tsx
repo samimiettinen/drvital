@@ -16,7 +16,7 @@ import {
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { path: '/upload', label: 'Upload & Inbox', icon: Upload },
+  
   { path: '/results', label: 'Results Explorer', icon: FlaskConical },
   { path: '/diagnoses', label: 'Diagnoses', icon: Stethoscope },
   { path: '/health-overview', label: 'My Health Story', icon: HeartPulse },
